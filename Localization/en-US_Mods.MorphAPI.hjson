@@ -1,0 +1,6 @@
+Items: {
+	SampleMorphItem: {
+		DisplayName: Sample Morph Item
+		Tooltip: ""
+	}
+}
