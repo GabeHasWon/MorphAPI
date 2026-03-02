@@ -58,6 +58,6 @@ public class MorphPlayer : ModPlayer
         if (Player.TryGetMorph(out Morph? morph))
             return morph.CanUseItem(Player, item);
 
-        return false;
+        return true;
     }
 }

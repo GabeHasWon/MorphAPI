@@ -1,4 +1,2 @@
-v1.0.0.1
-- Publicized the Extensions class
-- Fixed issues where mount height data may not be reset
-- Added Morph.BlockMounts, CanUseItem hooks/properties
+v1.0.0.2
+- Fixed item usage being blocked improperly
