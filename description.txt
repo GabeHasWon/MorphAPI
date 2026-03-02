@@ -3,3 +3,8 @@ by GabeHasWon
 
 This API allows mods to add in "Morphs", which can modify the player's movement functionality, visuals, hitbox and more.
 It also includes a Sample Morph for ease of learning.
+
+GitHub: https://github.com/GabeHasWon/MorphAPI
+
+My Patreon: https://www.patreon.com/c/gabehaswon
+Supporting me would help me put out more projects like this!
