@@ -1,8 +1,14 @@
 ﻿using MorphAPI.Core.Morphing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MorphAPI.Core;
 
-internal static class Extensions
+#nullable enable
+
+/// <summary>
+/// Various Morph-related extensions.
+/// </summary>
+public static class Extensions
 {
     /// <summary>
     /// Determines if the player is currently morphed.
@@ -19,12 +25,42 @@ internal static class Extensions
     /// </summary>
     /// <param name="player">The player using the morph.</param>
     /// <returns></returns>
-    public static Morph GetMorph(this Player player) => player.GetModPlayer<MorphPlayer>().ActiveMorph;
+    public static Morph? GetMorph(this Player player) => player.GetModPlayer<MorphPlayer>().ActiveMorph;
 
     /// <summary>
     /// Casts the player's morph to <typeparamref name="T"/>.
     /// </summary>
-    public static T GetMorph<T>(this Player player) where T : Morph => player.GetModPlayer<MorphPlayer>().ActiveMorph as T;
+    public static T? GetMorph<T>(this Player player) where T : Morph => player.GetModPlayer<MorphPlayer>().ActiveMorph as T;
+
+    /// <summary>
+    /// Attempts to get the player's morph instance, if they have one, and returns true. Otherwise, returns false.
+    /// </summary>
+    public static bool TryGetMorph(this Player player, [NotNullWhen(true)] out Morph? morph)
+    {
+        if (player.GetModPlayer<MorphPlayer>().ActiveMorph is Morph tMorph)
+        {
+            morph = tMorph;
+            return true;
+        }
+
+        morph = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Attempts to get the player's <typeparamref name="T"/> morph instance, if they have one, and returns true. Otherwise, returns false.
+    /// </summary>
+    public static bool TryGetMorph<T>(this Player player, [NotNullWhen(true)] out T? morph) where T : Morph
+    {
+        if (player.GetModPlayer<MorphPlayer>().ActiveMorph is T tMorph)
+        {
+            morph = tMorph;
+            return true;
+        }
+
+        morph = null;
+        return false;
+    }
 
     /// <summary>
     /// Toggles the morph, either dismorphing or morphing depending on the player's state. This should be used to set/unset morphs.
@@ -33,7 +69,7 @@ internal static class Extensions
     /// <param name="newMorph">The morph that's being toggled.</param>
     public static void ToggleMorph(this Player player, Morph newMorph)
     {
-        Morph morph = player.GetMorph();
+        Morph? morph = player.GetMorph();
 
         if (player.HasMorph())
         {
@@ -43,6 +79,10 @@ internal static class Extensions
         else
         {
             player.GetModPlayer<MorphPlayer>().ActiveMorph = newMorph;
+
+            if (newMorph.BlockMounts)
+                player.mount.Dismount(player);
+
             MorphLoader.OnMorph(player.GetModPlayer<MorphPlayer>().ActiveMorph, player);
         }
     }

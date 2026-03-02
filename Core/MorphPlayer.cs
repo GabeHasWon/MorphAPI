@@ -23,14 +23,14 @@ public class MorphPlayer : ModPlayer
 
     private void DrawMorphIfAny(On_PlayerDrawLayers.orig_DrawPlayer_RenderAllLayers orig, ref PlayerDrawSet drawinfo)
     {
-        if (!drawinfo.drawPlayer.HasMorph() || !drawinfo.drawPlayer.GetMorph().HideDefaultPlayer)
+        if (!drawinfo.drawPlayer.TryGetMorph(out Morph? morph) || !morph.HideDefaultPlayer)
             orig(ref drawinfo);
         else //Draws only the slime when active
         {
-            List<DrawData> oldDrawData = drawinfo.drawPlayer.GetMorph().PreClearDrawCache(ref drawinfo);
+            List<DrawData> oldDrawData = morph.PreClearDrawCache(ref drawinfo);
             drawinfo.DrawDataCache.Clear();
 
-            drawinfo.drawPlayer.GetMorph().SetDrawLayers(oldDrawData, ref drawinfo);
+            morph.SetDrawLayers(oldDrawData, ref drawinfo);
             orig(ref drawinfo);
         }
     }
@@ -48,5 +48,16 @@ public class MorphPlayer : ModPlayer
     {
         if (Player.HasMorph())
             MorphLoader.ModifyDrawInfo(ActiveMorph, ref drawInfo);
+    }
+
+    /// <summary>
+    /// Hook used for <see cref="Morph.CanUseItem(Player, Item)"/> functionality.
+    /// </summary>
+    public override bool CanUseItem(Item item)
+    {
+        if (Player.TryGetMorph(out Morph? morph))
+            return morph.CanUseItem(Player, item);
+
+        return false;
     }
 }

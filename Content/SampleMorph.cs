@@ -16,7 +16,7 @@ public class SampleMorph : Morph
     /// <summary>
     /// Whether to enable this morph for testing.
     /// </summary>
-    public const bool EnableMorph = true;
+    public const bool EnableMorph = false;
 
     /// <inheritdoc/>
     public override bool HideDefaultPlayer => true;

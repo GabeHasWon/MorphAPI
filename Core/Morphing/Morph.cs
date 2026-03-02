@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Terraria.DataStructures;
 
 namespace MorphAPI.Core.Morphing;
@@ -15,13 +14,18 @@ public abstract class Morph : ModType
     public virtual bool HideDefaultPlayer => false;
 
     /// <summary>
+    /// Whether this morph disallows the use of mounts. Defaults to false.
+    /// </summary>
+    public virtual bool BlockMounts => false;
+
+    /// <summary>
     /// Registers this morph to the lookup.
     /// </summary>
     protected sealed override void Register() => ModTypeLookup<Morph>.Register(this);
 
     /// <summary>
     /// Modifies the hitbox if desired. The resulting hitbox will be of the resulting <paramref name="size"/> if this method returns true.<br/>
-    /// This will do NOTHING if it returns false!
+    /// This will do NOTHING if it returns false! Furthermore, this does not run when the player is mounted, as they have priority.
     /// </summary>
     /// <param name="player">The player who's hitbox is being modified.</param>
     /// <param name="size">Size of the new hitbox. Defaults to the player's default hitbox size.</param>
@@ -45,6 +49,11 @@ public abstract class Morph : ModType
     public virtual void OnUnmorph(Player player)
     {
     }
+
+    /// <summary>
+    /// Whether the given player, when morphed, can use this item. Returns true by default.
+    /// </summary>
+    public virtual bool CanUseItem(Player player, Item item) => true;
 
     /// <summary>
     /// Called every frame when this morph is active.

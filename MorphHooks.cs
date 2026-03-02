@@ -4,9 +4,25 @@ using Terraria.DataStructures;
 
 namespace MorphAPI;
 
+#nullable enable
+
 internal class MorphHooks : ModSystem
 {
-    public override void Load() => On_Player.ResizeHitbox += EasilyModifyPlayerHeight;
+    public readonly record struct OldMountData(Mount.MountData? OldData, int Height, bool OldActive);
+
+    public override void Load()
+    {
+        On_Player.ResizeHitbox += EasilyModifyPlayerHeight;
+        On_Player.QuickMount += CanMount;
+    }
+
+    private void CanMount(On_Player.orig_QuickMount orig, Player self)
+    {
+        if (self.GetMorph() is { } morph && morph.BlockMounts)
+            return;
+
+        orig(self);
+    }
 
     /// <summary>
     /// Actually modifies the player's hitbox, with a very silly workaround.
@@ -23,13 +39,17 @@ internal class MorphHooks : ModSystem
         int oldBoost = -1;
         bool resetData = self.mount._data is null;
         bool oldActive = self.mount._active;
-        
+
+        OldMountData? mountData = null;
+
         if (resetData) // Force mount to be active
             self.mount._data = new Mount.MountData();
+        else if (self.mount._data is not null)
+            mountData = new OldMountData(self.mount._data, self.mount._data.heightBoost, self.mount.Active);
 
         int offset = size.Y - Player.defaultHeight;
 
-        self.mount._data.heightBoost = offset;
+        self.mount._data!.heightBoost = offset;
         self.mount._active = true;
 
         orig(self);
@@ -39,9 +59,15 @@ internal class MorphHooks : ModSystem
 
         if (resetData)
             self.mount._data = null;
+        else if (mountData is { } oldData)
+        {
+            self.mount._data = oldData.OldData;
+            self.mount._active = oldData.OldActive;
+            self.mount._data!.heightBoost = oldData.Height;
+        }
 
         if (!isNull)
-            self.mount._data.heightBoost = oldBoost;
+            self.mount._data!.heightBoost = oldBoost;
         else
             self.mount.Reset();
     }
