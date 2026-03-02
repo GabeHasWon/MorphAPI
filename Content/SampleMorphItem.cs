@@ -1,9 +1,13 @@
 ﻿using MorphAPI.Core;
-using MorphAPI.Core.Morphing;
 using Terraria.ID;
 
 namespace MorphAPI.Content;
 
+/// <summary>
+/// Simple item that solely allows the player to morph into <see cref="SampleMorph"/>.<br/>
+/// Make sure to remove the Autoload attribute (or set EnableMorph to true) if you want to use this!
+/// </summary>
+[Autoload(SampleMorph.EnableMorph)]
 internal class SampleMorphItem : ModItem
 {
     public override void SetDefaults()

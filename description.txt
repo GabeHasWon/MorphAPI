@@ -1,1 +1,5 @@
-Modify this file with a description of your mod.
+--- Morph API ---
+by GabeHasWon
+
+This API allows mods to add in "Morphs", which can modify the player's movement functionality, visuals, hitbox and more.
+It also includes a Sample Morph for ease of learning.

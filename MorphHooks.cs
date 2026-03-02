@@ -1,4 +1,5 @@
 ﻿using MorphAPI.Core;
+using MorphAPI.Core.Morphing;
 using Terraria.DataStructures;
 
 namespace MorphAPI;
@@ -7,9 +8,12 @@ internal class MorphHooks : ModSystem
 {
     public override void Load() => On_Player.ResizeHitbox += EasilyModifyPlayerHeight;
 
+    /// <summary>
+    /// Actually modifies the player's hitbox, with a very silly workaround.
+    /// </summary>
     private static void EasilyModifyPlayerHeight(On_Player.orig_ResizeHitbox orig, Player self)
     {
-        if (Main.gameMenu || self.mount is null || !self.HasMorph() || !self.GetMorph().ModifyHitbox(self, out Point16 size))
+        if (Main.gameMenu || self.mount is null || !self.HasMorph() || MorphLoader.ModifyHitbox(self.GetMorph(), self, out Point16 size))
         {
             orig(self);
             return;
