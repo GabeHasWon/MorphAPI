@@ -67,23 +67,48 @@ public static class Extensions
     /// </summary>
     /// <param name="player">The player who's being modified.</param>
     /// <param name="newMorph">The morph that's being toggled.</param>
-    public static void ToggleMorph(this Player player, Morph newMorph)
+    /// <param name="fromNet">Whether this call is from net. This is unused by the API and is only included for parity.</param>
+    public static void ToggleMorph(this Player player, Morph newMorph, bool fromNet = false)
     {
-        Morph? morph = player.GetMorph();
-
         if (player.HasMorph())
-        {
-            MorphLoader.OnUnmorph(morph, player);
-            player.GetModPlayer<MorphPlayer>().ActiveMorph = null;
-        }
+            Unmorph(player, fromNet);
         else
-        {
-            player.GetModPlayer<MorphPlayer>().ActiveMorph = newMorph;
+            SetMorph(player, newMorph, fromNet);
+    }
 
-            if (newMorph.BlockMounts)
-                player.mount.Dismount(player);
+    /// <summary>
+    /// Unmorphs the player - calls <see cref="MorphLoader.OnUnmorph(Morph, Player)"/> and sets the morph to null.<br/>
+    /// This does functionally nothing if the player is not morphed.
+    /// </summary>
+    public static void Unmorph(this Player player, bool fromNet = false)
+    {
+        if (player.GetModPlayer<MorphPlayer>().ActiveMorph is { } oldMorph)
+            MorphLoader.OnUnmorph(oldMorph, player);
 
-            MorphLoader.OnMorph(player.GetModPlayer<MorphPlayer>().ActiveMorph, player);
-        }
+        player.GetModPlayer<MorphPlayer>().ActiveMorph = null;
+
+        if (!fromNet && !Main.dedServ)
+            MorphAPI.SendUnmorph(player);
+    }
+
+    /// <summary>
+    /// Sets the player's morph to the given morph. This also dismounts the player if <see cref="Morph.BlockMounts"/> is true.<br/>
+    /// This will unmorph the player if they are currently in a morph.<br/>
+    /// <paramref name="fromNet"/> should not be true if you don't want to send a packet.
+    /// </summary>
+    public static void SetMorph(this Player player, Morph newMorph, bool fromNet = false)
+    {
+        if (player.GetModPlayer<MorphPlayer>().ActiveMorph is not null)
+            Unmorph(player);
+
+        player.GetModPlayer<MorphPlayer>().ActiveMorph = newMorph;
+
+        if (newMorph.BlockMounts)
+            player.mount.Dismount(player);
+
+        MorphLoader.OnMorph(player.GetModPlayer<MorphPlayer>().ActiveMorph, player);
+
+        if (!fromNet && !Main.dedServ)
+            MorphAPI.SendSetMorph(newMorph, player);
     }
 }

@@ -1,2 +1,4 @@
-v1.0.0.2
-- Fixed item usage being blocked improperly
+v1.0.0.3
+- Added NetSend and NetRecieve on Morph
+- Added extensions for SetMorph/Unmorph directly instead of requiring ToggleMorph
+- Added packeting for morphing, unmorphing and updating morphs

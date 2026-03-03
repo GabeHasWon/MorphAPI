@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using Terraria.DataStructures;
 
 namespace MorphAPI.Core.Morphing;
@@ -8,6 +10,18 @@ namespace MorphAPI.Core.Morphing;
 /// </summary>
 public abstract class Morph : ModType
 {
+    internal static Dictionary<int, Morph> InternalMorphById = [];
+
+    /// <summary>
+    /// Maps <see cref="NetId"/> values to morphs, primarily for networking.
+    /// </summary>
+    public static ReadOnlyDictionary<int, Morph> MorphsById => InternalMorphById.AsReadOnly();
+
+    /// <summary>
+    /// Number of morphs loaded.
+    /// </summary>
+    public static short MorphCount { get; private set; } = 0;
+
     /// <summary>
     /// Whether this morph hides the default draw layers entirely. Defaults to false.
     /// </summary>
@@ -19,9 +33,26 @@ public abstract class Morph : ModType
     public virtual bool BlockMounts => false;
 
     /// <summary>
+    /// ID used for registering morphs by ID. This is useful in IO/networking.
+    /// </summary>
+    public short NetId { get; private set; }
+
+    /// <summary>
     /// Registers this morph to the lookup.
     /// </summary>
-    protected sealed override void Register() => ModTypeLookup<Morph>.Register(this);
+    protected sealed override void Register()
+    {
+        ModTypeLookup<Morph>.Register(this);
+
+        NetId = MorphCount;
+        MorphCount++;
+        InternalMorphById.Add(NetId, this);
+    }
+
+    /// <summary>
+    /// Creates a shallow copy of the current <see cref="Morph"/>.
+    /// </summary>
+    public Morph Clone() => (Morph)MemberwiseClone();
 
     /// <summary>
     /// Modifies the hitbox if desired. The resulting hitbox will be of the resulting <paramref name="size"/> if this method returns true.<br/>
@@ -80,6 +111,23 @@ public abstract class Morph : ModType
     /// <param name="oldDrawData">Preserved layers from <see cref="PreClearDrawCache(ref PlayerDrawSet)"/>.</param>
     /// <param name="drawInfo">The player's draw info.</param>
     public virtual void SetDrawLayers(List<DrawData> oldDrawData, ref PlayerDrawSet drawInfo)
+    {
+    }
+
+    /// <summary>
+    /// Allows you to add additional information to sync when the <see cref="MorphAPI.MessageID.SetMorph"/> and <see cref="MorphAPI.MessageID.UpdateMorph"/> packets are sent.<br/>
+    /// Make sure to recieve the information in order in <see cref="NetRecieve(BinaryReader)"/>.
+    /// </summary>
+    /// <param name="writer"></param>
+    public virtual void NetSend(BinaryWriter writer) 
+    { 
+    }
+
+    /// <summary>
+    /// Recieves the information written in NetSend.
+    /// </summary>
+    /// <param name="reader"></param>
+    public virtual void NetRecieve(BinaryReader reader)
     {
     }
 }
