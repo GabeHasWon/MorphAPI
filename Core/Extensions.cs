@@ -1,5 +1,6 @@
 ﻿using MorphAPI.Core.Morphing;
 using System.Diagnostics.CodeAnalysis;
+using Terraria.ID;
 
 namespace MorphAPI.Core;
 
@@ -87,7 +88,7 @@ public static class Extensions
 
         player.GetModPlayer<MorphPlayer>().ActiveMorph = null;
 
-        if (!fromNet && !Main.dedServ)
+        if (!fromNet && Main.netMode == NetmodeID.MultiplayerClient)
             MorphAPI.SendUnmorph(player);
     }
 
@@ -108,7 +109,7 @@ public static class Extensions
 
         MorphLoader.OnMorph(player.GetModPlayer<MorphPlayer>().ActiveMorph, player);
 
-        if (!fromNet && !Main.dedServ)
+        if (!fromNet && Main.netMode == NetmodeID.MultiplayerClient)
             MorphAPI.SendSetMorph(newMorph, player);
     }
 }

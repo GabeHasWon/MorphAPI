@@ -31,6 +31,7 @@ internal class MorphHooks : ModSystem
     {
         if (Main.gameMenu || self.mount is null || !self.HasMorph() || MorphLoader.ModifyHitbox(self.GetMorph(), self, out Point16 size))
         {
+            self.width = Player.defaultWidth;
             orig(self);
             return;
         }
