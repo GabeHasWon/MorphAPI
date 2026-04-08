@@ -23,7 +23,10 @@ public abstract class Morph : ModType
     public static short MorphCount { get; private set; } = 0;
 
     /// <summary>
-    /// Whether this morph hides the default draw layers entirely. Defaults to false.
+    /// Whether this morph hides the default draw layers entirely. Defaults to false.<br/>
+    /// Use this in conjunction with <see cref="SetDrawLayers(List{DrawData}, ref PlayerDrawSet)"/>, 
+    /// using <see cref="PlayerDrawLayer.DrawWithTransformationAndChildren(ref PlayerDrawSet)"/> to draw the layer, and <see cref="PreClearDrawCache(ref PlayerDrawSet)"/>
+    /// to preserve draw layers.
     /// </summary>
     public virtual bool HideDefaultPlayer => false;
 
@@ -116,17 +119,17 @@ public abstract class Morph : ModType
 
     /// <summary>
     /// Allows you to add additional information to sync when the <see cref="MorphAPI.MessageID.SetMorph"/> and <see cref="MorphAPI.MessageID.UpdateMorph"/> packets are sent.<br/>
-    /// Make sure to recieve the information in order in <see cref="NetRecieve(BinaryReader)"/>.
+    /// Make sure to recieve the information in order in <see cref="NetRecieve(BinaryReader)"/>.<br/>
+    /// This is only run on the client who's transforming, never the server or a remote client.<br/>
     /// </summary>
-    /// <param name="writer"></param>
     public virtual void NetSend(BinaryWriter writer) 
     { 
     }
 
     /// <summary>
-    /// Recieves the information written in NetSend.
+    /// Recieves the information written in NetSend.<br/>
+    /// This is always run on the server, and then on every client but the one that sent it.
     /// </summary>
-    /// <param name="reader"></param>
     public virtual void NetRecieve(BinaryReader reader)
     {
     }

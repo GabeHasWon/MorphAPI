@@ -52,7 +52,6 @@ public class SampleMorph : Morph
     /// <summary>
     /// Spawns vfx.
     /// </summary>
-
     public override void OnMorph(Player player)
     {
         for (int i = 0; i < 16; i++)
