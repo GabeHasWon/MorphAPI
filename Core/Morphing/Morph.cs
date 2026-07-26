@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using Terraria.DataStructures;
@@ -10,12 +11,27 @@ namespace MorphAPI.Core.Morphing;
 /// </summary>
 public abstract class Morph : ModType
 {
+    private class MorphSetup : ModSystem
+    {
+        public override void PostSetupContent()
+        {
+            MorphsById = InternalMorphById.AsReadOnly();
+            MorphNetIdByType = InternalMorphNetIdByType.AsReadOnly();
+        }
+    }
+
     internal static Dictionary<int, Morph> InternalMorphById = [];
+    internal static Dictionary<Type, short> InternalMorphNetIdByType = [];
 
     /// <summary>
-    /// Maps <see cref="NetId"/> values to morphs, primarily for networking.
+    /// Maps <see cref="NetId"/> values to morphs, primarily for networking. These are set in <see cref="ModSystem.PostSetupContent"/>.
     /// </summary>
-    public static ReadOnlyDictionary<int, Morph> MorphsById => InternalMorphById.AsReadOnly();
+    public static ReadOnlyDictionary<int, Morph> MorphsById { get; private set; }
+
+    /// <summary>
+    /// Lookup table for getting morph NetIds per type, avoiding the need for getting the singleton. These are set in <see cref="ModSystem.PostSetupContent"/>.
+    /// </summary>
+    public static ReadOnlyDictionary<Type, short> MorphNetIdByType { get; private set; }
 
     /// <summary>
     /// Number of morphs loaded.
@@ -38,7 +54,7 @@ public abstract class Morph : ModType
     /// <summary>
     /// ID used for registering morphs by ID. This is useful in IO/networking.
     /// </summary>
-    public short NetId { get; private set; }
+    public short NetId => MorphNetIdByType[GetType()];
 
     /// <summary>
     /// Registers this morph to the lookup.
@@ -47,9 +63,9 @@ public abstract class Morph : ModType
     {
         ModTypeLookup<Morph>.Register(this);
 
-        NetId = MorphCount;
+        InternalMorphNetIdByType.Add(GetType(), MorphCount);
+        InternalMorphById.Add(MorphCount, this);
         MorphCount++;
-        InternalMorphById.Add(NetId, this);
     }
 
     /// <summary>

@@ -1,5 +1,3 @@
-v1.0.0.3
-- Added NetSend and NetRecieve on Morph
-- Added extensions for SetMorph/Unmorph directly instead of requiring ToggleMorph
-- Added packeting for morphing, unmorphing and updating morphs
-- Fixed width not resetting properly
+v1.0.0.4
+- Fixed NetId not being stored properly per instance when using custom instances of a morph, causing syncing issues
+- Changed Morph.MorphsById to be a once-set property instead of a property wrapping Morph.InternalMorphById per-call in PostSetupContent
