@@ -50,19 +50,25 @@ public class SampleMorph : Morph
     }
 
     /// <summary>
-    /// Spawns vfx.
+    /// Spawns vfx. Dust is visual-only, so this is skipped on a dedicated server.
     /// </summary>
     public override void OnMorph(Player player)
     {
+        if (Main.dedServ)
+            return;
+
         for (int i = 0; i < 16; i++)
             Dust.NewDust(player.position, player.width, player.height, DustID.Dirt);
     }
 
     /// <summary>
-    /// Spawns vfx.
+    /// Spawns vfx. Dust is visual-only, so this is skipped on a dedicated server.
     /// </summary>
     public override void OnUnmorph(Player player)
     {
+        if (Main.dedServ)
+            return;
+
         for (int i = 0; i < 16; i++)
             Dust.NewDust(player.position, player.width, player.height, DustID.Dirt);
     }
