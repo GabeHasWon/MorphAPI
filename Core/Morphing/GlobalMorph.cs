@@ -8,7 +8,7 @@ namespace MorphAPI.Core.Morphing;
 internal class GlobalMorph : ModType
 {
     /// <summary>
-    /// Registes this instance to the <see cref="ModTypeLookup{T}"/> and <see cref="MorphLoader"/> classes. Sealed.
+    /// Registers this instance to the <see cref="ModTypeLookup{T}"/> and <see cref="MorphLoader"/> classes. Sealed.
     /// </summary>
     protected sealed override void Register()
     {
