@@ -24,13 +24,13 @@ public class SampleMorphDrawLayer : PlayerDrawLayer
     {
         Player player = drawInfo.drawPlayer;
 
-        if (player.HasMorph<SampleMorph>())
+        if (player.TryGetMorph(out SampleMorph morph))
         {
             Texture2D tex = TextureAssets.Item[ModContent.ItemType<SampleMorphItem>()].Value;
             Color color = Lighting.GetColor(player.Center.ToTileCoordinates());
             Vector2 pos = player.Bottom - Main.screenPosition + new Vector2(0, player.gfxOffY - 10);
             
-            var data = new DrawData(tex, pos.Floor(), null, color, player.GetMorph<SampleMorph>().rotation, tex.Size() / 2f, 1f, SpriteEffects.None, 0);
+            var data = new DrawData(tex, pos.Floor(), null, color, morph.rotation, tex.Size() / 2f, 1f, SpriteEffects.None, 0);
             drawInfo.DrawDataCache.Add(data);
         }
     }

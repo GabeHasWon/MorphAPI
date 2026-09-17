@@ -29,7 +29,7 @@ internal class MorphHooks : ModSystem
     /// </summary>
     private static void EasilyModifyPlayerHeight(On_Player.orig_ResizeHitbox orig, Player self)
     {
-        if (Main.gameMenu || self.mount is null || !self.HasMorph() || MorphLoader.ModifyHitbox(self.GetMorph(), self, out Point16 size))
+        if (Main.gameMenu || self.mount is null || !self.TryGetMorph(out Morph? morph) || MorphLoader.ModifyHitbox(morph, self, out Point16 size))
         {
             self.width = Player.defaultWidth;
             orig(self);
@@ -37,7 +37,7 @@ internal class MorphHooks : ModSystem
         }
 
         bool isNull = self.mount.Type == -1; // Get old values
-        int oldBoost = -1;
+        int oldBoost = isNull ? -1 : self.mount.HeightBoost;
         bool resetData = self.mount._data is null;
         bool oldActive = self.mount._active;
 
@@ -67,8 +67,8 @@ internal class MorphHooks : ModSystem
             self.mount._data!.heightBoost = oldData.Height;
         }
 
-        if (!isNull)
-            self.mount._data!.heightBoost = oldBoost;
+        if (!isNull && self.mount._data is not null)
+            self.mount._data.heightBoost = oldBoost;
         else
             self.mount.Reset();
     }

@@ -46,8 +46,8 @@ public class MorphPlayer : ModPlayer
     /// <param name="drawInfo"></param>
     public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
     {
-        if (Player.HasMorph())
-            MorphLoader.ModifyDrawInfo(ActiveMorph, ref drawInfo);
+        if (Player.TryGetMorph(out Morph? morph))
+            MorphLoader.ModifyDrawInfo(morph, ref drawInfo);
     }
 
     /// <summary>

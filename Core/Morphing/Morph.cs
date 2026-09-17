@@ -7,7 +7,8 @@ using Terraria.DataStructures;
 namespace MorphAPI.Core.Morphing;
 
 /// <summary>
-/// Defines a morph, which includes drawing, movement, hitbox and usage.
+/// Defines a morph, which includes drawing, movement, hitbox and usage.<para/>
+/// For examples on usage, see <see cref="Content.SampleMorph"/> for implementation.
 /// </summary>
 public abstract class Morph : ModType
 {
@@ -17,6 +18,14 @@ public abstract class Morph : ModType
         {
             MorphsById = InternalMorphById.AsReadOnly();
             MorphNetIdByType = InternalMorphNetIdByType.AsReadOnly();
+        }
+
+        public override void Unload()
+        {
+            InternalMorphById = null;
+            InternalMorphNetIdByType = null;
+            MorphsById = null;
+            MorphNetIdByType = null;
         }
     }
 

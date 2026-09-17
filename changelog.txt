@@ -1,3 +1,6 @@
-v1.0.0.4
-- Fixed NetId not being stored properly per instance when using custom instances of a morph, causing syncing issues
-- Changed Morph.MorphsById to be a once-set property instead of a property wrapping Morph.InternalMorphById per-call in PostSetupContent
+v1.0.0.5
+- Fixed an issue where GlobalMorph.ModifyHitbox will by default return false, meaning that classes that override it will usually short circuit MorphLoader.
+	This was changed to return true by default, and otherwise is the same.
+- Allowed clients to request all existing player morphs on entry instead of simply not having that information at all
+- Fixed an issue where a mount's heightBoost may not be reset properly, or may be set on a null mount, cascading errors
+- Various documentation changes/additions

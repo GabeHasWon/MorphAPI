@@ -2,9 +2,15 @@
 
 namespace MorphAPI.Core.Morphing;
 
+/// <summary>
+/// Allows modification of all morphs.
+/// </summary>
 internal class GlobalMorph : ModType
 {
-    protected override void Register()
+    /// <summary>
+    /// Registes this instance to the <see cref="ModTypeLookup{T}"/> and <see cref="MorphLoader"/> classes. Sealed.
+    /// </summary>
+    protected sealed override void Register()
     {
         ModTypeLookup<GlobalMorph>.Register(this);
         MorphLoader.RegisterGlobalMorph(this);
@@ -18,7 +24,7 @@ internal class GlobalMorph : ModType
     /// <param name="player">The player using the morph.</param>
     /// <param name="size">The size of the hitbox.</param>
     /// <returns>If the hitbox was modified</returns>
-    public virtual bool ModifyHitbox(Morph morph, Player player, ref Point16 size) => false;
+    public virtual bool ModifyHitbox(Morph morph, Player player, ref Point16 size) => true;
 
     /// <summary>
     /// Called when any morph is activated.
